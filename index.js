@@ -33,4 +33,27 @@ app.post("/shopify-webhook", async (req, res) => {
 
 // Render utilise PORT automatiquement
 const PORT = process.env.PORT || 3000;
+
+// Route GET pour tester l'envoi Telegram sans Shopify
+app.get("/test", async (req, res) => {
+  try {
+    const message = "🚀 Test direct depuis Render (sans Shopify)";
+    const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: message
+      })
+    });
+
+    const data = await response.json();
+    console.log("Résultat Telegram :", data);
+    res.json(data);
+  } catch (err) {
+    console.error("Erreur :", err);
+    res.status(500).send("Erreur lors de l'envoi");
+  }
+});
+
 app.listen(PORT, () => console.log(`Webhook running on port ${PORT}`));
